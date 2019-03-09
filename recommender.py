@@ -70,9 +70,14 @@ def predict(topMatch):
 
 #0 is considered as unrated
 
-data=[[5,4,0,1,2],[1,2,5,2,5],[5,4,5,5,1]] #input data
-nusers=len(data) # no. of users
-nsongs=len(data[0]) #no. of songs
+data=pd.read_csv("PT-Project/dummyData.csv")    #input data
+dataMat=np.array(data.to_records().view())
+                 
+                 
+nusers=np.size(dataMat,0)   # no. of users
+nsongs=np.size(dataMat,1)   #no. of songs
+
+
 datan=normalize(data,nusers,nsongs) #normalized data set
 similarity=[[0 for x in range(nusers)] for y in range(nusers)]
 datacalc=[[0 for x in range(nsongs)] for y in range(nusers)] #calculated data
