@@ -60,7 +60,7 @@ def predict(topMatch):
     i=0#current index
     s=0#sum of similarities
     dotProd=0 
-    while(topMatch[0][i]>0):
+    while(i<10 and topMatch[0][i]>0):
         dotProd=dotProd+topMatch[0][i]*topMatch[1][i]
         s=s+topMatch[0][i]
         i=i+1
@@ -70,12 +70,13 @@ def predict(topMatch):
 
 #0 is considered as unrated
 
-data=pd.read_csv("PT-Project/dummyData.csv")    #input data
+data=pd.read_csv("dummyData.csv")    #input data
 data=data.values
+
                  
                  
-nusers=np.size(dataMat)   # no. of users
-nsongs=np.size(dataMat,1)   #no. of songs
+nusers=data.shape[0]  # no. of users
+nsongs=data.shape[1]   #no. of songs
 
 
 datan=normalize(data,nusers,nsongs) #normalized data set
@@ -94,5 +95,5 @@ for i in range(nusers):
             topMatch=findSimilarUsers(data,datan,nusers,similarity,i,j)
             s=sum(data[i])
             avg=s[0]/s[1]
-            datacalc[i][j]=predict(topMatch)+avg
+            datacalc[i][j]=round(predict(topMatch)+avg,3)
 print(datacalc)
