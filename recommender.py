@@ -74,7 +74,7 @@ data=pd.read_csv("PT-Project/dummyData.csv")    #input data
 dataMat=np.array(data.to_records().view())
                  
                  
-nusers=np.size(dataMat,0)   # no. of users
+nusers=np.size(dataMat)   # no. of users
 nsongs=np.size(dataMat,1)   #no. of songs
 
 
