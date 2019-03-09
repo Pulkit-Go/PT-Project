@@ -1,4 +1,7 @@
+import numpy as np
+import pandas as pd
 import math
+
 def sum(row):
     s=[0,0]   #s[0] stores sum of elements and s[1] stores no. of non zero elements
     for i in row:
@@ -6,6 +9,7 @@ def sum(row):
         if i!=0:
             s[1]=s[1]+1
     return s
+
 def normalize(data,nusers,nsongs):
     datan=[[0 for x in range(nsongs)] for y in range(nusers)]
     for i in range(nusers):
@@ -15,12 +19,14 @@ def normalize(data,nusers,nsongs):
             if(data[i][j]!=0):
                 datan[i][j]=data[i][j]-avg
     return datan
+
 def mod(i,nsongs):
     m=0
     for j in range(nsongs):
         m=m+datan[i][j]*datan[i][j]
     m=math.sqrt(m)
     return m
+
 def calcSimilarity(datan,user,similarity,nusers,nsongs):
     for i in range(nusers):
         if(similarity[i][user]==0):
@@ -28,6 +34,8 @@ def calcSimilarity(datan,user,similarity,nusers,nsongs):
             for j in range(nsongs):
                 dotProd=dotProd+datan[user][j]*datan[i][j]
             similarity[i][user]=similarity[user][i]=dotProd/(mod(i,nsongs)*mod(user,nsongs))
+            
+
 def findSimilarUsers(data, datan, nusers, similarity, user, song):
     topMatch=[[0 for x in range(10)] for y in range(2)] #1st row contains similarity and second contains song rating of corresponding user
     usedUsers=[0 for x in range(nusers)]
@@ -46,6 +54,8 @@ def findSimilarUsers(data, datan, nusers, similarity, user, song):
         topMatch[0][i]=b
         topMatch[1][i]=datan[ind][song]
     return topMatch
+
+
 def predict(topMatch):
     i=0#current index
     s=0#sum of similarities
@@ -56,7 +66,10 @@ def predict(topMatch):
         i=i+1
     prediction=dotProd/s
     return prediction
+
+
 #0 is considered as unrated
+
 data=[[5,4,0,1,2],[1,2,5,2,5],[5,4,5,5,1]] #input data
 nusers=len(data) # no. of users
 nsongs=len(data[0]) #no. of songs
