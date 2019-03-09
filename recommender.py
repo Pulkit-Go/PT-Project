@@ -79,8 +79,11 @@ nsongs=np.size(dataMat,1)   #no. of songs
 
 
 datan=normalize(data,nusers,nsongs) #normalized data set
+
 similarity=[[0 for x in range(nusers)] for y in range(nusers)]
-datacalc=[[0 for x in range(nsongs)] for y in range(nusers)] #calculated data
+
+datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
+
 for i in range(nusers):
     f=0  #flag: is similarity calculated??
     for j in range(nsongs):
