@@ -71,7 +71,7 @@ def predict(topMatch):
 #0 is considered as unrated
 
 data=pd.read_csv("PT-Project/dummyData.csv")    #input data
-dataMat=np.array(data.to_records().view())
+data=data.values
                  
                  
 nusers=np.size(dataMat)   # no. of users
