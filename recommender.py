@@ -102,12 +102,12 @@ for i in range(nusers):
 
 nrecc=5
 
-dataSort=np.zeros(shape=(nusers,nrecc+1))
+dataSort=np.ones(shape=(nusers,nrecc+1))*-1
 
 for i in range(nusers):
 	dataSort[i][0]=i
 	for j in range(1,nrecc+1):
-		if(max(datacalc[i])!=0):	
+		if(sorted(datacalc[i],reverse=True)[j-1]!=0):	
 			dataSort[i][j]=datacalc[i].index(sorted(datacalc[i],reverse=True)[j-1])
 		else:
 			dataSort[i][j]=-1
