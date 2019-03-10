@@ -67,6 +67,16 @@ def predict(topMatch):
     prediction=dotProd/s
     return prediction
 
+def maxEl(a):
+	max=a[0]
+	for i in range(len(a)):
+		if(a[i]>max):
+			max=a[i]
+	return a.index(max)
+
+	
+	
+
 
 #0 is considered as unrated
 
@@ -96,4 +106,17 @@ for i in range(nusers):
             s=sum(data[i])
             avg=s[0]/s[1]
             datacalc[i][j]=round(predict(topMatch)+avg,3)
-print(datacalc)
+
+nratings=5
+
+dataSort=np.zeros(shape=(nusers,nratings+1))
+
+for i in range(nusers):
+	dataSort[i][0]=i
+	for j in range(1,nratings):
+		if(max(datacalc[i])!=0):	
+			dataSort[i][j]=datacalc[i].index(sorted(datacalc[i],reverse=True)[j-1])
+		else:
+			dataSort[i][j]=-1
+	
+print(dataSort)
