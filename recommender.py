@@ -70,16 +70,6 @@ def predict(topMatch):
     prediction=dotProd/s
     return prediction
 
-def maxEl(a):
-	max=a[0]
-	for i in range(len(a)):
-		if(a[i]>max):
-			max=a[i]
-	return a.index(max)
-
-	
-	
-
 
 #0 is considered as unrated
 
