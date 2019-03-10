@@ -107,13 +107,13 @@ for i in range(nusers):
             avg=s[0]/s[1]
             datacalc[i][j]=round(predict(topMatch)+avg,3)
 
-nratings=5
+nrecc=5
 
-dataSort=np.zeros(shape=(nusers,nratings+1))
+dataSort=np.zeros(shape=(nusers,nrecc+1))
 
 for i in range(nusers):
 	dataSort[i][0]=i
-	for j in range(1,nratings):
+	for j in range(1,nrecc):
 		if(max(datacalc[i])!=0):	
 			dataSort[i][j]=datacalc[i].index(sorted(datacalc[i],reverse=True)[j-1])
 		else:
