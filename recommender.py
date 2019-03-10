@@ -110,6 +110,6 @@ for i in range(nusers):
 		if(sorted(datacalc[i],reverse=True)[j-1]!=0):	
 			dataSort[i][j]=datacalc[i].index(sorted(datacalc[i],reverse=True)[j-1])
 		else:
-			dataSort[i][j]=-1
+			break
 	
 print(dataSort)
