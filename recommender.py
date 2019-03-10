@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 import math
 
+
+np.set_printoptions(threshold=np.inf)
+
 def sum(row):
     s=[0,0]   #s[0] stores sum of elements and s[1] stores no. of non zero elements
     for i in row:
@@ -113,7 +116,7 @@ dataSort=np.zeros(shape=(nusers,nrecc+1))
 
 for i in range(nusers):
 	dataSort[i][0]=i
-	for j in range(1,nrecc):
+	for j in range(1,nrecc+1):
 		if(max(datacalc[i])!=0):	
 			dataSort[i][j]=datacalc[i].index(sorted(datacalc[i],reverse=True)[j-1])
 		else:
