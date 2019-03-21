@@ -7,15 +7,8 @@ from numpy import genfromtxt
 
 np.set_printoptions(threshold=np.inf)
 
-def sum(row):
-    s=[0,0]   #s[0] stores sum of elements and s[1] stores no. of non zero elements
-    for i in row:
-        s[0]=s[0]+i
-        if i!=0:
-            s[1]=s[1]+1
-    return s
 
-def normalize(data,nusers,nsongs):
+"""def normalize(data,nusers,nsongs):
     datan=[[0 for x in range(nsongs)] for y in range(nusers)]
     for i in range(nusers):
         s=sum(data[i])
@@ -25,12 +18,7 @@ def normalize(data,nusers,nsongs):
                 datan[i][j]=data[i][j]-avg
     return datan
 
-def mod(i,nsongs):
-    m=0
-    for j in range(nsongs):
-        m=m+datan[i][j]*datan[i][j]
-    m=math.sqrt(m)
-    return m
+
 
 def calcSimilarity(datan,user,similarity,nusers,nsongs):
     for i in range(nusers):
@@ -59,19 +47,45 @@ def findSimilarUsers(data, datan, nusers, similarity, user, song):
         topMatch[0][i]=b
         topMatch[1][i]=datan[ind][song]
     return topMatch
+"""
+def sum(row):
+    s=[0,0]   #s[0] stores sum of elements and s[1] stores no. of non zero elements
+    for i in row:
+        s[0]=s[0]+i
+        if i!=0:
+            s[1]=s[1]+1
+    return s
 
 
-def predict(topMatch):
+def mod(i,data,nsongs):
+    m=0
+    for j in range(nsongs):
+        m=m+data[i][j]*data[i][j]
+    m=math.sqrt(m)
+    return m
+
+def predict(topMatch,data,song):
     i=0#current index
     s=0#sum of similarities
     dotProd=0 
     while(i<10 and topMatch[0][i]>0):
-        dotProd=dotProd+topMatch[0][i]*topMatch[1][i]
+        dotProd=dotProd+topMatch[0][i]*data[topMatch[1][i],song]
         s=s+topMatch[0][i]
         i=i+1
     prediction=dotProd/s
     return prediction
+def calculateSimilarity(a,b,data):
+    dotProd=0
+    for j in range(nsongs):
+        dotProd=dotProd+data[a][j]*data[b][j]
+    return dotProd/(mod(a,data,nsongs)*mod(b,data,nsongs))
 
+def match(user,s,noMatch,topMatch):
+    for i in range(noMatch):
+        if(s>topMatch[0][i]):
+            topMatch[0][i]=s
+            topMatch[1][i]=user
+            break
 
 #0 is considered as unrated
 data = genfromtxt("dummyData.csv", delimiter=',')	#numpy 2D array stores data
@@ -82,23 +96,28 @@ nusers=data.shape[0]  #no. of users
 nsongs=data.shape[1]   #no. of songs
 
 
-datan=normalize(data,nusers,nsongs) #normalized data set
+#datan=normalize(data,nusers,nsongs) #normalized data set
 
-similarity=[[0 for x in range(nusers)] for y in range(nusers)]
+#similarity=[[0 for x in range(nusers)] for y in range(nusers)]
 
 datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
 
 for i in range(nusers):
-    f=0  #flag: is similarity calculated??
+    #f=0  #flag: is similarity calculated??
+    noMatch=10
+    topMatch=[[0 for x in range(noMatch)] for y in range(2)]
+    for k in range(nusers):
+        s=calculateSimilarity(i,k,data)
+        match(k,s,noMatch,topMatch)
     for j in range(nsongs):
         if (data[i][j]==0):
-            if(f==0):
+            """if(f==0):
                 calcSimilarity(datan,i,similarity,nusers,nsongs)
                 f=1
-            topMatch=findSimilarUsers(data,datan,nusers,similarity,i,j)
+            topMatch=findSimilarUsers(data,datan,nusers,similarity,i,j)"""
             s=sum(data[i])
             avg=s[0]/s[1]
-            datacalc[i][j]=round(predict(topMatch)+avg,3)
+            datacalc[i][j]=round(predict(topMatch,data,j)+avg,3)
 
 nrecc=5
 
