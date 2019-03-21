@@ -3,6 +3,8 @@ import pandas as pd
 import math
 
 
+from numpy import genfromtxt
+
 np.set_printoptions(threshold=np.inf)
 
 def sum(row):
@@ -72,13 +74,11 @@ def predict(topMatch):
 
 
 #0 is considered as unrated
-
-data=pd.read_csv("dummyData.csv")    #input data
-data=data.values
+data = genfromtxt("dummyData.csv", delimiter=',')	#numpy 2D array stores data
 
                  
                  
-nusers=data.shape[0]  # no. of users
+nusers=data.shape[0]  #no. of users
 nsongs=data.shape[1]   #no. of songs
 
 
@@ -104,7 +104,13 @@ nrecc=5
 
 dataSort=np.ones(shape=(nusers,nrecc+1))*-1
 
-for i in range(nusers):
+
+
+for i in range(0,nrecc+1):
+	dataSort[0][i]=i
+
+
+for i in range(1,nusers):
 	dataSort[i][0]=i
 	for j in range(1,nrecc+1):
 		if(sorted(datacalc[i],reverse=True)[j-1]!=0):	
