@@ -50,7 +50,7 @@ for i in range(nusers):
             
             
             avg=np.sum(data[i])/np.count_nonzero(data[i])
-            datacalc[i][j]=round(predict(topMatch,data,j),3)
+            datacalc[i][j]=round(predict(topMatch,data,j)+avg,3)
 
 nrecc=5
 
