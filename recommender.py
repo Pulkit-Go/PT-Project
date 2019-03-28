@@ -22,11 +22,16 @@ def calculateSimilarity(a,b,data):
 	return np.dot(data[a],data[b])/math.sqrt( np.sum(np.square(data[a])) * np.sum(np.square(data[b])) )
 
 def match(user,s,noMatch,topMatch):
+    smallest=2
+    smallestIndex=-1
     for i in range(noMatch):
-        if(s>topMatch[0][i]):
-            topMatch[0][i]=s
-            topMatch[1][i]=user
-            break
+        if(topMatch[0][i]<smallest):
+            smallest=topMatch[0][i]
+            smallestIndex=i
+    if(s>smallest):
+        topMatch[0][smallestIndex]=s
+        topMatch[1][smallestIndex]=user
+
 
 #0 is considered as unrated
 data = genfromtxt("dummyData.csv", delimiter=',')	#numpy 2D array stores data
@@ -39,7 +44,6 @@ datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
 #datacalc=np.array(datac)
 
 for i in range(nusers):
-    #f=0  #flag: is similarity calculated??
     noMatch=10
     topMatch=[[0 for x in range(noMatch)] for y in range(2)]
     for k in range(nusers):
@@ -47,10 +51,7 @@ for i in range(nusers):
         match(k,s,noMatch,topMatch)
     for j in range(nsongs):
         if (data[i][j]==0):
-            
-            
-            avg=np.sum(data[i])/np.count_nonzero(data[i])
-            datacalc[i][j]=round(predict(topMatch,data,j)+avg,3)
+            datacalc[i][j]=round(predict(topMatch,data,j),3)
 
 nrecc=5
 
