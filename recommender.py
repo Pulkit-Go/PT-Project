@@ -32,20 +32,20 @@ def match(user,s,noMatch,topMatch):
         topMatch[0][smallestIndex]=s
         topMatch[1][smallestIndex]=user
 def searchs(song,datas,nsongs):
-    for i in range(nsongs):
-        if(datas[i]==song):
-            return i
+    bot=0
+    top=nsongs-1
+    while(top>=bot):
+        med=(top+bot)//2
+        if(datas[med]>song):
+            top=med-1
+        elif(datas[med]<song):
+            bot=med+1
+        else:
+            return med
     return -1
 
-
-#0 is considered as unrated
-"""data = genfromtxt("dummyData.csv", delimiter=',')	#numpy 2D array stores data
-                
-nusers=data.shape[0]-1  #no. of users
-nsongs=data.shape[1]   #no. of songs"""
-
-nusers=20000
-nsongs=20000
+nusers=10000
+nsongs=10000
 data=[[0 for x in range(nsongs)] for y in range(nusers)]
 datas=["\0" for x in range(nsongs)]
 
@@ -57,14 +57,15 @@ for i in range(nsongs):
 datau=["\0" for x in range(nusers)]
 
 
-f=open("kaggle_users.txt","r")
+"""f=open("kaggle_users.txt","r")
 for i in range(nsongs):
     datau[i]=f.readline().rstrip('\n')
-#print(datau)
-
+"""
 f=open("kaggle_visible_evaluation_triplets.txt","r")
 currentuser=0
 user=f.read(40)
+datau[0]=user
+found=0
 while(currentuser<nusers):
     if(user==datau[currentuser]):
         song=f.read(19).strip()
@@ -72,11 +73,15 @@ while(currentuser<nusers):
         freq=int(f.readline().strip())
         if(ind!=-1):
             data[currentuser][ind]=freq
+            print(user,song,freq)
+            found+=1
         user=f.read(40)
     else:
         currentuser+=1
+        if(currentuser!=nusers):
+            datau[currentuser]=user
 
-print(data)
+print("found =",found)
 
 datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
 #datacalc=np.array(datac)
