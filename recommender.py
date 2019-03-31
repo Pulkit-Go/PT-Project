@@ -83,7 +83,7 @@ while(currentuser<nusers):
 
 print("found =",found)
 
-datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
+#datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
 #datacalc=np.array(datac)
 """
 for i in range(nusers):
