@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 import math
-import scipy as sp
-from scipy.sparse import csr_matrix
 
 
 from numpy import genfromtxt
@@ -15,7 +13,7 @@ def predict(topMatch,data,song):
     dotProd=0 
     prediction=0
     while(i<10 and topMatch[0][i]>0):
-        dotProd=dotProd+topMatch[0][i]*data[topMatch[1][i]][song]
+        dotProd=dotProd+topMatch[0][i]*data[int(topMatch[1][i])][song]
         s=s+topMatch[0][i]
         i=i+1
     if(s!=0):
@@ -94,27 +92,34 @@ while(currentuser<nusers):
         currentuser+=1
         if(currentuser!=nusers):
             datau[currentuser]=user
-
-datasp=csr_matrix(data)
     
 print("found =",found-currentnsongs)
-print(datasp)
 
 #datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
-"""datacalc=np.zeros((nusers,nsongs))
+datacalc=np.zeros((nusers,nsongs))
+
 for i in range(nusers):
     noMatch=10
     topMatch=np.zeros((2,noMatch))
     for k in range(nusers):
-        s=calculateSimilarity(i,k,data)
-        match(k,s,noMatch,topMatch)
+        if(i!=k):
+            s=calculateSimilarity(i,k,data)
+            match(k,s,noMatch,topMatch)
     for j in range(nsongs):
         if (data[i][j]==0):
             datacalc[i][j]=round(predict(topMatch,data,j),3)
+
 nrecc=5
+
 dataSort=np.ones(shape=(nusers,nrecc+1))*-1
+
+
+
 for i in range(0,nrecc+1):
 	dataSort[0][i]=i
+
+
+
 for i in range(1,nusers):
 	dataSort[i][0]=i
 	for j in range(1,nrecc+1):
@@ -123,4 +128,4 @@ for i in range(1,nusers):
 		else:
 			break
 	
-print(dataSort)"""
+print(dataSort)
