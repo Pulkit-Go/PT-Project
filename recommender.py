@@ -12,7 +12,7 @@ def predict(topMatch,data,song):
     s=0#sum of similarities
     dotProd=0 
     prediction=0
-    while(i<10 and topMatch[0][i]>0):
+    while(i<10 and data[int(topMatch[1][i])][song]>0):
         dotProd=dotProd+topMatch[0][i]*data[int(topMatch[1][i])][song]
         s=s+topMatch[0][i]
         i=i+1
