@@ -11,11 +11,13 @@ def predict(topMatch,data,song):
     i=0#current index
     s=0#sum of similarities
     dotProd=0 
+    prediction=0
     while(i<10 and topMatch[0][i]>0):
-        dotProd=dotProd+topMatch[0][i]*data[topMatch[1][i],song]
+        dotProd=dotProd+topMatch[0][i]*data[topMatch[1][i]][song]
         s=s+topMatch[0][i]
         i=i+1
-    prediction=dotProd/s
+    if(s!=0):
+        prediction=dotProd/s
     return prediction
     
 def calculateSimilarity(a,b,data):
@@ -47,8 +49,8 @@ def searchs(song,datas,nsongs):
             return i 
     return -1
 
-nusers=5000
-nsongs=30000
+nusers=10
+nsongs=100
 data=np.zeros((nusers,nsongs))
 datas=["\0" for x in range(nsongs)]
 
@@ -78,26 +80,28 @@ while(currentuser<nusers):
         ind=searchs(song,datas,currentnsongs)
         freq=int(f.readline().strip())
         if(ind==-1):
+            ind=currentnsongs
             datas[currentnsongs]=song
             currentnsongs+=1
-        else:
-            data[currentuser][ind]=freq
-            print(user,song,freq)
-            found+=1
+        found=found+1
+        data[currentuser][ind]=freq
+        print(user,song,freq)
         user=f.read(40)
         song=f.read(19).strip()
     else:
         currentuser+=1
         if(currentuser!=nusers):
             datau[currentuser]=user
-print("found =",found)
+    
+print("found =",found-currentsongs)
+print(data)
 
 #datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
-#datacalc=np.array(datac)
-"""
+"""datacalc=np.zeros((nusers,nsongs))
+
 for i in range(nusers):
     noMatch=10
-    topMatch=[[0 for x in range(noMatch)] for y in range(2)]
+    topMatch=np.zeros((2,noMatch))
     for k in range(nusers):
         s=calculateSimilarity(i,k,data)
         match(k,s,noMatch,topMatch)
@@ -124,5 +128,4 @@ for i in range(1,nusers):
 		else:
 			break
 	
-print(dataSort)
-"""
+print(dataSort)"""
