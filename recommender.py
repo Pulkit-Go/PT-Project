@@ -32,7 +32,7 @@ def match(user,s,noMatch,topMatch):
         topMatch[0][smallestIndex]=s
         topMatch[1][smallestIndex]=user
 def searchs(song,datas,nsongs):
-    bot=0
+    """bot=0
     top=nsongs-1
     while(top>=bot):
         med=(top+bot)//2
@@ -41,19 +41,22 @@ def searchs(song,datas,nsongs):
         elif(datas[med]<song):
             bot=med+1
         else:
-            return med
+            return med"""
+    for i in range(nsongs):
+        if(song==datas[i]):
+            return i 
     return -1
 
-nusers=10000
-nsongs=10000
-data=[[0 for x in range(nsongs)] for y in range(nusers)]
+nusers=5000
+nsongs=30000
+data=np.zeros((nusers,nsongs))
 datas=["\0" for x in range(nsongs)]
 
-f=open("kaggle_songs.txt","r")
+"""f=open("kaggle_songs.txt","r")
 for i in range(nsongs):
     datas[i]=f.read(18)
     x=f.readline()
-
+"""
 datau=["\0" for x in range(nusers)]
 
 
@@ -65,22 +68,28 @@ f=open("kaggle_visible_evaluation_triplets.txt","r")
 currentuser=0
 user=f.read(40)
 datau[0]=user
+song=f.read(19).strip()
+datas[0]=song
 found=0
+currentnsongs=0
 while(currentuser<nusers):
     if(user==datau[currentuser]):
-        song=f.read(19).strip()
-        ind=searchs(song,datas,nsongs)
+        
+        ind=searchs(song,datas,currentnsongs)
         freq=int(f.readline().strip())
-        if(ind!=-1):
+        if(ind==-1):
+            datas[currentnsongs]=song
+            currentnsongs+=1
+        else:
             data[currentuser][ind]=freq
             print(user,song,freq)
             found+=1
         user=f.read(40)
+        song=f.read(19).strip()
     else:
         currentuser+=1
         if(currentuser!=nusers):
             datau[currentuser]=user
-
 print("found =",found)
 
 #datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
