@@ -49,8 +49,8 @@ def searchs(song,datas,nsongs):
             return i 
     return -1
 
-nusers=1000
-nsongs=10000
+nusers=100
+nsongs=1500
 data=np.zeros((nusers,nsongs))
 datas=["\0" for x in range(nsongs)]
 
@@ -74,6 +74,7 @@ song=f.read(19).strip()
 datas[0]=song
 found=0
 currentnsongs=0
+print("reading data....\n")
 while(currentuser<nusers):
     if(user==datau[currentuser]):
         
@@ -85,7 +86,7 @@ while(currentuser<nusers):
             currentnsongs+=1
         found=found+1
         data[currentuser][ind]=freq
-        print(user,song,freq)
+        #print(user,song,freq)
         user=f.read(40)
         song=f.read(19).strip()
     else:
@@ -93,9 +94,11 @@ while(currentuser<nusers):
         if(currentuser!=nusers):
             datau[currentuser]=user
     
-print("found =",found-currentnsongs)
+#print("found =",found-currentnsongs)
 
 #datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
+print("calculating recommendations....\n")
+nsongs=currentnsongs+1
 datacalc=np.zeros((nusers,nsongs))
 
 for i in range(nusers):
@@ -113,9 +116,9 @@ nrecc=5
 
 dataSort=np.ones(shape=(nusers,nrecc+1))*-1
 
+print("Sorting data....\n")
 
-
-for i in range(0,nrecc+1):
+"""for i in range(0,nrecc+1):
 	dataSort[0][i]=i
 
 
@@ -127,5 +130,9 @@ for i in range(1,nusers):
 			dataSort[i][j]=datacalc[i].index(sorted(datacalc[i],reverse=True)[j-1])
 		else:
 			break
-	
-print(dataSort)
+"""
+print("printing data...")
+for i in range(nusers):
+    for j in range(nsongs):
+        if(datacalc[i][j]!=0):
+            print(i,j,datacalc[i][j])
