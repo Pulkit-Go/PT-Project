@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import math
+import scipy as sp
+from scipy.sparse import csr_matrix
 
 
 from numpy import genfromtxt
@@ -49,8 +51,8 @@ def searchs(song,datas,nsongs):
             return i 
     return -1
 
-nusers=10
-nsongs=100
+nusers=1000
+nsongs=10000
 data=np.zeros((nusers,nsongs))
 datas=["\0" for x in range(nsongs)]
 
@@ -92,13 +94,14 @@ while(currentuser<nusers):
         currentuser+=1
         if(currentuser!=nusers):
             datau[currentuser]=user
+
+datasp=csr_matrix(data)
     
-print("found =",found-currentsongs)
-print(data)
+print("found =",found-currentnsongs)
+print(datasp)
 
 #datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
 """datacalc=np.zeros((nusers,nsongs))
-
 for i in range(nusers):
     noMatch=10
     topMatch=np.zeros((2,noMatch))
@@ -108,18 +111,10 @@ for i in range(nusers):
     for j in range(nsongs):
         if (data[i][j]==0):
             datacalc[i][j]=round(predict(topMatch,data,j),3)
-
 nrecc=5
-
 dataSort=np.ones(shape=(nusers,nrecc+1))*-1
-
-
-
 for i in range(0,nrecc+1):
 	dataSort[0][i]=i
-
-
-
 for i in range(1,nusers):
 	dataSort[i][0]=i
 	for j in range(1,nrecc+1):
