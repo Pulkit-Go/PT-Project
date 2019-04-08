@@ -103,6 +103,8 @@ nrecc=5
 
 dataSort=np.ones(shape=(nusers,nrecc+1))*-1
 
+
+
 print("Sorting data....\n")
 
 print("printing data...")
@@ -111,11 +113,14 @@ for i in range(nusers):np.argsort(
     for j in range(nsongs):
         if(datacalc[i][j]!=0):
             print(i,j,datacalc[i][j])'''
+count=0
 
 for i in range(nusers):
 	if(allzero(datacalc[i],nsongs)):
 		dat=np.array(datacalc[i])
 		ind=np.argpartition(dat,-4)[-4:]
 		print(i," : ",ind[np.argsort(-1*dat[ind])])
+		count+=1;
 	
-print("Time taken:",time.time()-t1)
+print("Time taken:",round(time.time()-t1,3))
+print("Number of recommendations made: ",count)
