@@ -54,11 +54,7 @@ t1=time.time()
 nsongs=15*nusers
 data=np.zeros((nusers,nsongs))
 datas=["\0" for x in range(nsongs)]
-
-
 datau=["\0" for x in range(nusers)]
-
-
 
 f=open("kaggle_visible_evaluation_triplets.txt","r")
 currentuser=0
@@ -87,7 +83,6 @@ while(currentuser<nusers):
         currentuser+=1
         if(currentuser!=nusers):
             datau[currentuser]=user
-    
 
 print("calculating recommendations....\n")
 nsongs=currentnsongs+1
@@ -107,8 +102,6 @@ for i in range(nusers):
 nrecc=5
 
 dataSort=np.ones(shape=(nusers,nrecc+1))*-1
-
-
 
 print("Sorting data....\n")
 
