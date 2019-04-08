@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import math
-
+import time
 
 from numpy import genfromtxt
 
@@ -34,38 +34,32 @@ def match(user,s,noMatch,topMatch):
         topMatch[0][smallestIndex]=s
         topMatch[1][smallestIndex]=user
 def searchs(song,datas,nsongs):
-    """bot=0
-    top=nsongs-1
-    while(top>=bot):
-        med=(top+bot)//2
-        if(datas[med]>song):
-            top=med-1
-        elif(datas[med]<song):
-            bot=med+1
-        else:
-            return med"""
     for i in range(nsongs):
         if(song==datas[i]):
             return i 
     return -1
+    
+def allzero(a,n):
+	for i in range(n):
+		if(a[i]!=0): 
+			return 1;
+	return 0;	
 
-nusers=100
-nsongs=1500
+
+print("How many users?")
+nusers=int(input())
+
+t1=time.time()
+
+nsongs=15*nusers
 data=np.zeros((nusers,nsongs))
 datas=["\0" for x in range(nsongs)]
 
-"""f=open("kaggle_songs.txt","r")
-for i in range(nsongs):
-    datas[i]=f.read(18)
-    x=f.readline()
-"""
+
 datau=["\0" for x in range(nusers)]
 
 
-"""f=open("kaggle_users.txt","r")
-for i in range(nsongs):
-    datau[i]=f.readline().rstrip('\n')
-"""
+
 f=open("kaggle_visible_evaluation_triplets.txt","r")
 currentuser=0
 user=f.read(40)
@@ -94,9 +88,7 @@ while(currentuser<nusers):
         if(currentuser!=nusers):
             datau[currentuser]=user
     
-#print("found =",found-currentnsongs)
 
-#datacalc=[[0 for x in range(nsongs)] for y in range(nusers)]    #calculated data
 print("calculating recommendations....\n")
 nsongs=currentnsongs+1
 datacalc=np.zeros((nusers,nsongs))
@@ -116,23 +108,21 @@ nrecc=5
 
 dataSort=np.ones(shape=(nusers,nrecc+1))*-1
 
+
+
 print("Sorting data....\n")
 
-"""for i in range(0,nrecc+1):
-	dataSort[0][i]=i
-
-
-
-for i in range(1,nusers):
-	dataSort[i][0]=i
-	for j in range(1,nrecc+1):
-		if(sorted(datacalc[i],reverse=True)[j-1]!=0):	
-			dataSort[i][j]=datacalc[i].index(sorted(datacalc[i],reverse=True)[j-1])
-		else:
-			break
-"""
 print("printing data...")
-for i in range(nusers):
+'''
+for i in range(nusers):np.argsort(
     for j in range(nsongs):
         if(datacalc[i][j]!=0):
-            print(i,j,datacalc[i][j])
+            print(i,j,datacalc[i][j])'''
+
+for i in range(nusers):
+	if(allzero(datacalc[i],nsongs)):
+		dat=np.array(datacalc[i])
+		ind=np.argpartition(dat,-4)[-4:]
+		print(i," : ",ind[np.argsort(-1*dat[ind])])
+	
+print("Time taken:",time.time()-t1)
