@@ -118,11 +118,9 @@ count=0
 
 for i in range(nusers):
 	if(allzero(datacalc[i],nsongs)):
-		dat=np.array(datacalc[i])
-		ind=np.argpartition(dat,-4)[-4:]
-		print(i," : ",dat[ind[np.argsort(-1*dat[ind])]])
-		count+=1
+		ind=np.argpartition(np.array(datacalc[i]),-4)[-4:]
+		print("User",i," : ",ind[np.argsort(-1*np.array(datacalc[i])[ind])])
+		count+=1;
 	
 print("Time taken:",round(time.time()-t1,3))
 print("Number of recommendations made: ",count)
-
