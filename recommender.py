@@ -92,10 +92,6 @@ for i in range(nusers):
 
 nrecc=4
 
-print("Sorting data....\n")
-
-print("printing data...")
-
 count=0
 for i in range(nusers):
 	if(allzero(datacalc[i],nsongs)):
