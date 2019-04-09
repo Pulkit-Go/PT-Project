@@ -7,14 +7,15 @@ from numpy import genfromtxt
 
 np.set_printoptions(threshold=np.inf)
 
-def predict(topMatch,data,song):
+def predict(ind,sim,noMatch,data,song):
     i=0#current index
     s=0#sum of similarities
     dotProd=0 
     prediction=0
-    while(i<10 and data[int(topMatch[1][i])][song]>0):
-        dotProd=dotProd+topMatch[0][i]*data[int(topMatch[1][i])][song]
-        s=s+topMatch[0][i]
+    while(i<noMatch):
+        if(data[ind[i]][song]>0):
+            dotProd=dotProd+sim[ind[i]]*data[ind[i]][song]
+            s=s+sim[ind[i]]
         i=i+1
     if(s!=0):
         prediction=dotProd/s
@@ -42,7 +43,7 @@ def searchs(song,datas,nsongs):
 def allzero(a,n):
 	for i in range(n):
 		if(a[i]!=0): 
-			return 1;
+			return 1
 	return 0;	
 
 
@@ -76,7 +77,6 @@ while(currentuser<nusers):
             currentnsongs+=1
         found=found+1
         data[currentuser][ind]=freq
-        #print(user,song,freq)
         user=f.read(40)
         song=f.read(19).strip()
     else:
@@ -91,13 +91,14 @@ datacalc=np.zeros((nusers,nsongs))
 for i in range(nusers):
     noMatch=10
     topMatch=np.zeros((2,noMatch))
+    sim=np.zeros(nusers)
     for k in range(nusers):
         if(i!=k):
-            s=calculateSimilarity(i,k,data)
-            match(k,s,noMatch,topMatch)
+            sim[k]=calculateSimilarity(i,k,data)
+    ind=np.argpartition(sim,-10)[-10:]
     for j in range(nsongs):
         if (data[i][j]==0):
-            datacalc[i][j]=round(predict(topMatch,data,j),3)
+            datacalc[i][j]=round(predict(ind,sim,noMatch,data,j),3)
 
 nrecc=5
 
@@ -119,8 +120,9 @@ for i in range(nusers):
 	if(allzero(datacalc[i],nsongs)):
 		dat=np.array(datacalc[i])
 		ind=np.argpartition(dat,-4)[-4:]
-		print(i," : ",ind[np.argsort(-1*dat[ind])])
-		count+=1;
+		print(i," : ",dat[ind[np.argsort(-1*dat[ind])]])
+		count+=1
 	
 print("Time taken:",round(time.time()-t1,3))
 print("Number of recommendations made: ",count)
+
