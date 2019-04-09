@@ -20,20 +20,11 @@ def predict(ind,sim,noMatch,data,song):
     if(s!=0):
         prediction=dotProd/s
     return prediction
-    
+
 def calculateSimilarity(a,b,data):
 	return np.dot(data[a],data[b])/math.sqrt( np.sum(np.square(data[a])) * np.sum(np.square(data[b])) )
 
-def match(user,s,noMatch,topMatch):
-    smallest=2
-    smallestIndex=-1
-    for i in range(noMatch):
-        if(topMatch[0][i]<smallest):
-            smallest=topMatch[0][i]
-            smallestIndex=i
-    if(s>smallest):
-        topMatch[0][smallestIndex]=s
-        topMatch[1][smallestIndex]=user
+
 def searchs(song,datas,nsongs):
     for i in range(nsongs):
         if(song==datas[i]):
@@ -44,7 +35,7 @@ def allzero(a,n):
 	for i in range(n):
 		if(a[i]!=0): 
 			return 1
-	return 0;	
+	return 0
 
 
 print("How many users?")
@@ -90,7 +81,6 @@ datacalc=np.zeros((nusers,nsongs))
 
 for i in range(nusers):
     noMatch=10
-    topMatch=np.zeros((2,noMatch))
     sim=np.zeros(nusers)
     for k in range(nusers):
         if(i!=k):
@@ -100,27 +90,20 @@ for i in range(nusers):
         if (data[i][j]==0):
             datacalc[i][j]=round(predict(ind,sim,noMatch,data,j),3)
 
-nrecc=5
-
-dataSort=np.ones(shape=(nusers,nrecc+1))*-1
-
-
+nrecc=4
 
 print("Sorting data....\n")
 
 print("printing data...")
-'''
-for i in range(nusers):np.argsort(
-    for j in range(nsongs):
-        if(datacalc[i][j]!=0):
-            print(i,j,datacalc[i][j])'''
-count=0
 
+count=0
 for i in range(nusers):
 	if(allzero(datacalc[i],nsongs)):
-		ind=np.argpartition(np.array(datacalc[i]),-4)[-4:]
-		print("User",i," : ",ind[np.argsort(-1*np.array(datacalc[i])[ind])])
-		count+=1;
+		dat=np.array(datacalc[i])
+		ind=np.argpartition(dat,-nrecc)[-nrecc:]
+		print(i,"\t : \t",ind[np.argsort(-1*dat[ind])],"\t",dat[ind[np.argsort(-1*dat[ind])]])
+		count+=1
 	
 print("Time taken:",round(time.time()-t1,3))
 print("Number of recommendations made: ",count)
+
