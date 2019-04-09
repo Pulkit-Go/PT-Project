@@ -100,7 +100,7 @@ for i in range(nusers):
 	if(allzero(datacalc[i],nsongs)):
 		dat=np.array(datacalc[i])
 		ind=np.argpartition(dat,-nrecc)[-nrecc:]
-		print(i,"\t : \t",ind[np.argsort(-1*dat[ind])],"\t",dat[ind[np.argsort(-1*dat[ind])]])
+		print(i,"\t:\t",ind[np.argsort(-1*dat[ind])])
 		count+=1
 	
 print("Time taken:",round(time.time()-t1,3))
