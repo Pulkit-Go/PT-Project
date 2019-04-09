@@ -30,12 +30,6 @@ def searchs(song,datas,nsongs):
         if(song==datas[i]):
             return i 
     return -1
-    
-def allzero(a,n):
-	for i in range(n):
-		if(a[i]!=0): 
-			return 1
-	return 0
 
 
 print("How many users?")
@@ -93,14 +87,7 @@ for i in range(nusers):
 nrecc=4
 
 count=0
-"""
-for i in range(nusers):
-	if(allzero(datacalc[i],nsongs)):
-		dat=np.array(datacalc[i])
-		ind=np.argpartition(dat,-nrecc)[-nrecc:]
-		print("User",i," :  ",ind[np.argsort(-1*dat[ind])])
-		count+=1
-"""    
+
 for i in range(nusers):
     dat=np.array(datacalc[i])
     ind=np.argpartition(dat,-nrecc)[-nrecc:]
