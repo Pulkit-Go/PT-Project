@@ -38,7 +38,8 @@ def allzero(a,n):
 	return 0
 
 
-nusers=int(input("How many users?:"))
+print("How many users?")
+nusers=int(input())
 
 t1=time.time()
 
@@ -100,9 +101,8 @@ for i in range(nusers):
 	if(allzero(datacalc[i],nsongs)):
 		dat=np.array(datacalc[i])
 		ind=np.argpartition(dat,-nrecc)[-nrecc:]
-		print(i,"\t:\t",ind[np.argsort(-1*dat[ind])])
+		print("User",i," :  ",ind[np.argsort(-1*dat[ind])])
 		count+=1
 	
 print("Time taken:",round(time.time()-t1,3))
 print("Number of recommendations made: ",count)
-
