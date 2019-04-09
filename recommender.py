@@ -38,8 +38,7 @@ def allzero(a,n):
 	return 0
 
 
-print("How many users?")
-nusers=int(input())
+nusers=int(input("How many users?:"))
 
 t1=time.time()
 
