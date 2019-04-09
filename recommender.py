@@ -93,12 +93,19 @@ for i in range(nusers):
 nrecc=4
 
 count=0
+"""
 for i in range(nusers):
 	if(allzero(datacalc[i],nsongs)):
 		dat=np.array(datacalc[i])
 		ind=np.argpartition(dat,-nrecc)[-nrecc:]
 		print("User",i," :  ",ind[np.argsort(-1*dat[ind])])
 		count+=1
-	
+"""    
+for i in range(nusers):
+    dat=np.array(datacalc[i])
+    ind=np.argpartition(dat,-nrecc)[-nrecc:]
+    if(dat[ind[np.argsort(-1*dat[ind])]][0]>0):
+        print("User",i," :  ",ind[np.argsort(-1*dat[ind])])
+        count+=1
 print("Time taken:",round(time.time()-t1,3))
 print("Number of recommendations made: ",count)
