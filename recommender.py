@@ -39,12 +39,14 @@ def precision(m1, m2, n, m):
                 match+=1
     return (match/m)
 
+
+
 nusers=int(input("Enter number of users : "))
 
 t1=time.time()
 
-nsongs=15*nusers
-nrecc=5
+nsongs=55*nusers
+nrecc=50
 nrecc1=3
 data=np.zeros((nusers,nsongs))
 datas=["\0" for x in range(nsongs)]
@@ -53,41 +55,80 @@ datau=["\0" for x in range(nusers)]
 f=open("kaggle_visible_evaluation_triplets.txt","r")
 currentuser=0
 user=f.read(40)
-datau[0]=user
+prevuser=user
 song=f.read(19).strip()
-datas[0]=song
-found=0
+song
 currentnsongs=0
-print("reading data....\n")
+print("finding top users....\n")
 x=0
 truedata=np.zeros((20,nrecc1))
-while(currentuser<nusers):
-    if(user==datau[currentuser]):
-        ind=searchs(song,datas,currentnsongs)
+topusers=np.zeros(110000)
+songsheard=0
+while(currentuser<110000):
+    if(user==prevuser):
         freq=int(f.readline().strip())
-        if(ind==-1):
-            ind=currentnsongs
-            datas[currentnsongs]=song
-            currentnsongs+=1
-        found=found+1
-        if(x<nrecc1 and currentuser >= nusers-20 and ind!=currentnsongs-1):
-            truedata[currentuser-nusers+19][x]=ind
-            x+=1
-        else:
-            data[currentuser][ind]=freq
+        songsheard+=1
         user=f.read(40)
         song=f.read(19).strip()
     else:
+        topusers[currentuser]=songsheard
         currentuser+=1
+        songsheard=1
+        if(currentuser!=110000):
+            freq=int(f.readline().strip())
+            user=f.read(40)
+            song=f.read(19).strip()
+            prevuser=user
+
+topusers=np.argpartition(topusers,-nusers)[-nusers:]
+topusers=topusers[np.argsort(topusers)]
+print("reading data....\n")
+f=open("kaggle_visible_evaluation_triplets.txt","r")
+currentuser=0
+user=f.read(40)
+prevuser=datau[0]=user
+song=f.read(19).strip()
+datas[0]=song
+currentnsongs=0
+si=0
+ui=0
+
+while(currentuser<=topusers[nusers-1]):
+    if(user==prevuser):
+        #ind=searchs(song,datas,currentnsongs)
+        freq=int(f.readline().strip())
+        
+        if(currentuser==topusers[ui]):
+            datau[ui]=user
+            ind=searchs(song,datas,currentnsongs)
+            if(ind==-1):
+                ind=currentnsongs
+                datas[ind]=song
+                currentnsongs+=1
+            #data[ui][ind]=freq
+            if(x<nrecc1 and ui >= nusers-20 and ind!=currentnsongs-1):
+                truedata[ui-nusers+19][x]=ind
+                x+=1
+            else:
+                data[ui][ind]=freq
+        
+        user=f.read(40)
+        song=f.read(19).strip()
+    else:
+        if(currentuser==topusers[ui]):
+            ui+=1
+        currentuser+=1
+        prevuser=user
         x=0
-        if(currentuser!=nusers):
-            datau[currentuser]=user
+        
 print("Time taken:",round(time.time()-t1,3))
+
 print("calculating recommendations....\n")
 
 nsongs=currentnsongs+1
-
 count=0
+precisionsum=0
+peoplehelped=0
 for i in range(nusers):
     datacalc=np.zeros(nsongs)
     noMatch=10
@@ -99,24 +140,17 @@ for i in range(nusers):
     for j in range(nsongs):
         if (data[i][j]==0):
             datacalc[j]=round(predict(ind,sim,noMatch,data,j),3)
-    dat=datacalc
-    ind=np.argpartition(dat,-nrecc)[-nrecc:]
-    if(dat[ind[np.argsort(-1*dat[ind])]][0]>0):
-        print("User",i," :  ",ind[np.argsort(-1*dat[ind])])
+    #dat=datacalc
+    ind=np.argpartition(datacalc,-nrecc)[-nrecc:]
+    if(datacalc[ind[np.argsort(-1*datacalc[ind])]][0]>0):
+        print("User",i," :  ",ind[np.argsort(-1*datacalc[ind])])
         count+=1
-    if(i>=nusers-20):
-        print(precision(ind[np.argsort(-1*dat[ind])],truedata[i-nusers+19],nrecc,nrecc1))
+        if(i>=nusers-20):
+            precisionsum+=(precision(ind[np.argsort(-1*datacalc[ind])],truedata[i-nusers+19],nrecc,nrecc1))
+            peoplehelped+=1
+    #print("User",i," :  ",ind[np.argsort(-1*datacalc[ind])])
+    
 
-
-
-"""for i in range(nusers):
-    dat=np.array(datacalc[i])
-    ind=np.argpartition(dat,-nrecc)[-nrecc:]
-    if(dat[ind[np.argsort(-1*dat[ind])]][0]>0):
-        print("User",i," :  ",ind[np.argsort(-1*dat[ind])])
-        count+=1
-    if(i>=nusers-20):
-        print(precision(ind[np.argsort(-1*dat[ind])],truedata[i-nusers+19],nrecc,nrecc1))"""
-print(truedata)
+print("MAP score = ",(precisionsum/peoplehelped))
 print("Time taken:",round(time.time()-t1,3))
 print("Number of recommendations made: ",count)
