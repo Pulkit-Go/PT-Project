@@ -61,7 +61,7 @@ song
 currentnsongs=0
 print("finding top users....\n")
 x=0
-truedata=np.zeros((20,nrecc1))
+truedata=-1.*np.ones((20,nrecc1))
 topusers=np.zeros(110000)
 songsheard=0
 while(currentuser<110000):
@@ -140,17 +140,15 @@ for i in range(nusers):
     for j in range(nsongs):
         if (data[i][j]==0):
             datacalc[j]=round(predict(ind,sim,noMatch,data,j),3)
-    #dat=datacalc
     ind=np.argpartition(datacalc,-nrecc)[-nrecc:]
-    if(datacalc[ind[np.argsort(-1*datacalc[ind])]][0]>0):
+    ind=ind[np.nonzero(datacalc[ind])]
+    if(ind.size>0):
         print("User",i," :  ",ind[np.argsort(-1*datacalc[ind])])
         count+=1
-        if(i>=nusers-20):
-            precisionsum+=(precision(ind[np.argsort(-1*datacalc[ind])],truedata[i-nusers+19],nrecc,nrecc1))
-            peoplehelped+=1
-    #print("User",i," :  ",ind[np.argsort(-1*datacalc[ind])])
+    if(i>=nusers-20):
+        precisionsum+=(precision(ind[np.argsort(-1*datacalc[ind])],truedata[i-nusers+19],ind.size,nrecc1))
+        peoplehelped+=1
     
-
 print("MAP score = ",(precisionsum/peoplehelped))
 print("Time taken:",round(time.time()-t1,3))
 print("Number of recommendations made: ",count)
