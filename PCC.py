@@ -26,26 +26,9 @@ def searchs(song,datas,nsongs):
             return i 
     return -1
 
-def calculateSimilarity(a,b,data):
-	return np.dot(data[a],data[b])/math.sqrt( np.sum(np.square(data[a])) * np.sum(np.square(data[b])) )
-
-def predict(ind,sim,noMatch,data,song):
-    i=0#current index
-    s=0#sum of similarities
-    dotProd=0 
-    prediction=0
-    while(i<noMatch):
-        if(data[ind[i]][song]>0):
-            dotProd=dotProd+sim[ind[i]]*data[ind[i]][song]
-            s=s+sim[ind[i]]
-        i=i+1
-    if(s!=0):
-        prediction=dotProd/s
-    return prediction
 
 
-print("How many users?")
-nusers=int(input())
+nusers=int(input("Enter number of users : "))
 
 t1=time.time()
 
@@ -82,15 +65,16 @@ while(currentuser<nusers):
             datau[currentuser]=user
 
 nsongs=currentnsongs+1
-datacalc=np.zeros((nusers,nsongs))
+datas=datas[0:nsongs]
+data=data[0:nusers,0:nsongs]
+
+print("making suggestions...\n")
 
 tdata=np.transpose(data)
 
 SVD=TruncatedSVD(n_components=int(nusers/25),random_state=17)
 
 matrix=SVD.fit_transform(tdata)
-
-#print(matrix)
 
 warnings.filterwarnings("ignore",category=RuntimeWarning)
 
@@ -107,9 +91,10 @@ for i in range(nusers):
 	if(np.amax(data[i]>0)):
 		songIndex = np.argmax(data[i])	
 		corr_song=corr[songIndex]
-
+		ind=np.argsort(corr_song)
+		#print(corr_song)
 		for j in range(nsongs):
-			if(corr_song[j]>0.99 and corr_song[j]<1.00 and data[i][j]==0):
+			if(corr_song[ind[j]]>0.99 and corr_song[ind[j]]<1.00 and data[i][j]==0):
 				if(count<nrecc):
 					reccsong[count]=datas[j]
 					count=count+1;	
