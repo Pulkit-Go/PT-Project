@@ -19,6 +19,31 @@ np.set_printoptions(threshold=np.inf)
 
 # Code starts here #  
 
+
+def searchs(song,datas,nsongs):
+    for i in range(nsongs):
+        if(song==datas[i]):
+            return i 
+    return -1
+
+def calculateSimilarity(a,b,data):
+	return np.dot(data[a],data[b])/math.sqrt( np.sum(np.square(data[a])) * np.sum(np.square(data[b])) )
+
+def predict(ind,sim,noMatch,data,song):
+    i=0#current index
+    s=0#sum of similarities
+    dotProd=0 
+    prediction=0
+    while(i<noMatch):
+        if(data[ind[i]][song]>0):
+            dotProd=dotProd+sim[ind[i]]*data[ind[i]][song]
+            s=s+sim[ind[i]]
+        i=i+1
+    if(s!=0):
+        prediction=dotProd/s
+    return prediction
+
+
 print("How many users?")
 nusers=int(input())
 
@@ -59,7 +84,6 @@ while(currentuser<nusers):
 nsongs=currentnsongs+1
 datacalc=np.zeros((nusers,nsongs))
 
-
 for i in range(nusers):
     noMatch=10
     sim=np.zeros(nusers)
@@ -84,7 +108,7 @@ warnings.filterwarnings("ignore",category=RuntimeWarning)
 corr=np.corrcoef(matrix)
 
 
-nrecc=6
+nrecc=5
 count=0
 
 
@@ -96,7 +120,7 @@ for i in range(nusers):
 		corr_song=corr[songIndex]
 
 		for j in range(nsongs):
-			if(corr_song[j]>0.999 and corr_song[j]<1 and data[i][j]==0):
+			if(corr_song[j]>0.99 and corr_song[j]<1.00 and data[i][j]==0):
 				if(count<nrecc):
 					reccsong[count]=datas[j]
 					count=count+1;	
