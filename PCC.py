@@ -3,44 +3,21 @@ import pandas as pd
 import math
 import time
 import scipy 
-
-from scipy.sparse import csr_matrix
-
 import sklearn
-from sklearn.decomposition import TruncatedSVD
-from sklearn import preprocessing
-from sklearn.metrics import mean_squared_error
-
 
 from numpy import genfromtxt
 import warnings
 
+from scipy.sparse import csr_matrix
+
+from sklearn.decomposition import TruncatedSVD
+from sklearn import preprocessing
+
+
 np.set_printoptions(threshold=np.inf)
 
 
-def predict(ind,sim,noMatch,data,song):
-    i=0#current index
-    s=0#sum of similarities
-    dotProd=0 
-    prediction=0
-    while(i<noMatch):
-        if(data[ind[i]][song]>0):
-            dotProd=dotProd+sim[ind[i]]*data[ind[i]][song]
-            s=s+sim[ind[i]]
-        i=i+1
-    if(s!=0):
-        prediction=dotProd/s
-    return prediction
-
-def calculateSimilarity(a,b,data):
-	return np.dot(data[a],data[b])/math.sqrt( np.sum(np.square(data[a])) * np.sum(np.square(data[b])) )
-
-
-def searchs(song,datas,nsongs):
-    for i in range(nsongs):
-        if(song==datas[i]):
-            return i 
-    return -1
+# Code starts here #  
 
 print("How many users?")
 nusers=int(input())
@@ -95,40 +72,20 @@ for i in range(nusers):
             datacalc[i][j]=round(predict(ind,sim,noMatch,data,j),3)
 
 
-#print(preprocessing.scale(data))
-#exit()
-
 
 tdata=np.transpose(data)
+
 SVD=TruncatedSVD(n_components=int(nusers/25),random_state=17)
 
 matrix=SVD.fit_transform(tdata)
 
-#print(matrix.shape,data.shape)
-#exit()
 warnings.filterwarnings("ignore",category=RuntimeWarning)
 
 corr=np.corrcoef(matrix)
 
 
-#recon_matrix = np.transpose(SVD.inverse_transform(matrix))
-
-#print(mean_squared_error(recon_matrix,data))			#0.158 rmse
-#exit()
-
-
-
 nrecc=6
 count=0
-'''
-for i in range(nusers):
-	dat=np.array(recon_matrix[i])
-	ind=np.argpartition(dat,-nrecc)[-nrecc:]
-	if(dat[ind[np.argsort(-1*dat[ind])]][0]>0 and data[i][[ind[np.argsort(-1*dat[ind])]][0]]==0):
-		print("User",i," :  ",ind[np.argsort(-1*dat[ind])])
-		count+=1
-
-'''
 
 
 for i in range(nusers):
@@ -146,7 +103,5 @@ for i in range(nusers):
 					
 		if(count==nrecc):
 			print("User",i,":",reccsong)
-
-#print(count)
 
 print(round(time.time()-t1,3),"sec")
