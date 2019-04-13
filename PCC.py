@@ -1,0 +1,152 @@
+import numpy as np
+import pandas as pd
+import math
+import time
+import scipy 
+
+from scipy.sparse import csr_matrix
+
+import sklearn
+from sklearn.decomposition import TruncatedSVD
+from sklearn import preprocessing
+from sklearn.metrics import mean_squared_error
+
+
+from numpy import genfromtxt
+import warnings
+
+np.set_printoptions(threshold=np.inf)
+
+
+def predict(ind,sim,noMatch,data,song):
+    i=0#current index
+    s=0#sum of similarities
+    dotProd=0 
+    prediction=0
+    while(i<noMatch):
+        if(data[ind[i]][song]>0):
+            dotProd=dotProd+sim[ind[i]]*data[ind[i]][song]
+            s=s+sim[ind[i]]
+        i=i+1
+    if(s!=0):
+        prediction=dotProd/s
+    return prediction
+
+def calculateSimilarity(a,b,data):
+	return np.dot(data[a],data[b])/math.sqrt( np.sum(np.square(data[a])) * np.sum(np.square(data[b])) )
+
+
+def searchs(song,datas,nsongs):
+    for i in range(nsongs):
+        if(song==datas[i]):
+            return i 
+    return -1
+
+print("How many users?")
+nusers=int(input())
+
+t1=time.time()
+
+nsongs=15*nusers
+data=np.zeros((nusers,nsongs))
+datas=["\0" for x in range(nsongs)]
+datau=["\0" for x in range(nusers)]
+
+f=open("kaggle_visible_evaluation_triplets.txt","r")
+currentuser=0
+user=f.read(40)
+datau[0]=user
+song=f.read(19).strip()
+datas[0]=song
+found=0
+currentnsongs=0
+print("reading data....\n")
+while(currentuser<nusers):
+    if(user==datau[currentuser]):
+        
+        ind=searchs(song,datas,currentnsongs)
+        freq=int(f.readline().strip())
+        if(ind==-1):
+            ind=currentnsongs
+            datas[currentnsongs]=song
+            currentnsongs+=1
+        found=found+1
+        data[currentuser][ind]=freq
+        user=f.read(40)
+        song=f.read(19).strip()
+    else:
+        currentuser+=1
+        if(currentuser!=nusers):
+            datau[currentuser]=user
+
+nsongs=currentnsongs+1
+datacalc=np.zeros((nusers,nsongs))
+
+
+for i in range(nusers):
+    noMatch=10
+    sim=np.zeros(nusers)
+    for k in range(nusers):
+        if(i!=k):
+            sim[k]=calculateSimilarity(i,k,data)
+    ind=np.argpartition(sim,-10)[-10:]
+    for j in range(nsongs):
+        if (data[i][j]==0):
+            datacalc[i][j]=round(predict(ind,sim,noMatch,data,j),3)
+
+
+#print(preprocessing.scale(data))
+#exit()
+
+
+tdata=np.transpose(data)
+SVD=TruncatedSVD(n_components=int(nusers/25),random_state=17)
+
+matrix=SVD.fit_transform(tdata)
+
+#print(matrix.shape,data.shape)
+#exit()
+warnings.filterwarnings("ignore",category=RuntimeWarning)
+
+corr=np.corrcoef(matrix)
+
+
+#recon_matrix = np.transpose(SVD.inverse_transform(matrix))
+
+#print(mean_squared_error(recon_matrix,data))			#0.158 rmse
+#exit()
+
+
+
+nrecc=6
+count=0
+'''
+for i in range(nusers):
+	dat=np.array(recon_matrix[i])
+	ind=np.argpartition(dat,-nrecc)[-nrecc:]
+	if(dat[ind[np.argsort(-1*dat[ind])]][0]>0 and data[i][[ind[np.argsort(-1*dat[ind])]][0]]==0):
+		print("User",i," :  ",ind[np.argsort(-1*dat[ind])])
+		count+=1
+
+'''
+
+
+for i in range(nusers):
+	count=0
+	reccsong=["\0" for k in range(nrecc)]
+	if(np.amax(datacalc[i]>0)):
+		songIndex = np.argmax(datacalc[i])	
+		corr_song=corr[songIndex]
+
+		for j in range(nsongs):
+			if(corr_song[j]>0.999 and corr_song[j]<1 and data[i][j]==0):
+				if(count<nrecc):
+					reccsong[count]=datas[j]
+					count=count+1;	
+					
+		if(count==nrecc):
+			print("User",i,":",reccsong)
+
+#print(count)
+
+print(round(time.time()-t1,3),"sec")
