@@ -49,12 +49,12 @@ nusers=int(input())
 
 t1=time.time()
 
-nsongs=15*nusers
+nsongs=55*nusers
 data=np.zeros((nusers,nsongs))
 datas=["\0" for x in range(nsongs)]
 datau=["\0" for x in range(nusers)]
 
-f=open("kaggle_visible_evaluation_triplets.txt","r")
+f=open("topusers2000.txt","r")
 currentuser=0
 user=f.read(40)
 datau[0]=user
@@ -84,24 +84,13 @@ while(currentuser<nusers):
 nsongs=currentnsongs+1
 datacalc=np.zeros((nusers,nsongs))
 
-for i in range(nusers):
-    noMatch=10
-    sim=np.zeros(nusers)
-    for k in range(nusers):
-        if(i!=k):
-            sim[k]=calculateSimilarity(i,k,data)
-    ind=np.argpartition(sim,-10)[-10:]
-    for j in range(nsongs):
-        if (data[i][j]==0):
-            datacalc[i][j]=round(predict(ind,sim,noMatch,data,j),3)
-
-
-
 tdata=np.transpose(data)
 
 SVD=TruncatedSVD(n_components=int(nusers/25),random_state=17)
 
 matrix=SVD.fit_transform(tdata)
+
+#print(matrix)
 
 warnings.filterwarnings("ignore",category=RuntimeWarning)
 
@@ -115,8 +104,8 @@ count=0
 for i in range(nusers):
 	count=0
 	reccsong=["\0" for k in range(nrecc)]
-	if(np.amax(datacalc[i]>0)):
-		songIndex = np.argmax(datacalc[i])	
+	if(np.amax(data[i]>0)):
+		songIndex = np.argmax(data[i])	
 		corr_song=corr[songIndex]
 
 		for j in range(nsongs):
