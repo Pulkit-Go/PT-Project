@@ -1,46 +1,38 @@
 import numpy as np
 import time
-
 nusers=int(input("enter no. of users : "))
 t1=time.time()
-f=open("kaggle_visible_evaluation_triplets.txt","r")
+f=open("kaggle_visible_evaluation_triplets.txt","r")    #this is the file that contains actual user history
 currentuser=0
 user=f.read(40)
 prevuser=user
 song=f.read(19).strip()
-song
 currentnsongs=0
 print("finding top users....\n")
-allusers=np.zeros(110000)
+allusers=np.zeros(110000)       #this array will finally contain total no. of songs listened to by each user
 songsheard=0
 while(currentuser<110000):
+    freq=int(f.readline().strip())
     if(user==prevuser):
-        freq=int(f.readline().strip())
         songsheard+=1
-        user=f.read(40)
-        song=f.read(19).strip()
     else:
         allusers[currentuser]=songsheard
         currentuser+=1
         songsheard=1
-        if(currentuser!=110000):
-            freq=int(f.readline().strip())
-            user=f.read(40)
-            song=f.read(19).strip()
-            prevuser=user
+        if(currentuser==110000-1):
+            break
+        prevuser=user
+    user=f.read(40)
+    song=f.read(19).strip()
 
-ind=np.argpartition(allusers,-nusers)[-nusers:]
-print(ind)
-topfreq=allusers[ind]
-print(topfreq)
-topusers=ind[np.argsort(-1*topfreq)]
-print(topusers)
-print(allusers[topusers])
-print("reading data....\n")
-j=open("topusers.txt","w")
-si=0
-ui=0
+ind=np.argpartition(allusers,-nusers)[-nusers:]     #indices of top nusers
+topusers=ind[np.argsort(-1*allusers[ind])]          #indices of top users in descending order of no. of songs heard
+print("compiling file....\n")
+j=open("topusers.txt","w")          
+si=0        #current song index
+ui=0        #current user index
 while(ui<nusers):
+    #we will read the file multiple times until we get all the required users
     f=open("kaggle_visible_evaluation_triplets.txt","r")
     currentuser=0
     user=f.read(40)
@@ -50,6 +42,8 @@ while(ui<nusers):
     
 
     while(ui<nusers and currentuser<=topusers[ui]):
+        #if our current user is the required top user, we write his history to the new file
+        #otherwise we go to the next line and continue the process
         if(user==prevuser):
             freq=f.readline().strip()
             
@@ -70,6 +64,5 @@ while(ui<nusers):
             prevuser=user
             x=0
     f.close()
-    print(ui)
 j.close()
-print(time.time()-t1)
+print("time taken=",round(time.time()-t1,3))
